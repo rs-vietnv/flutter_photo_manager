@@ -4,14 +4,12 @@ class ListDialog extends StatefulWidget {
   const ListDialog({
     Key? key,
     required this.children,
-    this.padding = EdgeInsets.zero,
   }) : super(key: key);
 
   final List<Widget> children;
-  final EdgeInsetsGeometry padding;
 
   @override
-  State<ListDialog> createState() => _ListDialogState();
+  _ListDialogState createState() => _ListDialogState();
 }
 
 class _ListDialogState extends State<ListDialog> {
@@ -19,9 +17,8 @@ class _ListDialogState extends State<ListDialog> {
   Widget build(BuildContext context) {
     return Center(
       child: ListView(
-        padding: widget.padding,
-        shrinkWrap: true,
         children: widget.children,
+        shrinkWrap: true,
       ),
     );
   }

@@ -1,17 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:photo_manager_example/page/custom_filter_example_page.dart';
-import 'package:photo_manager_example/widget/nav_button.dart';
+import 'package:image_scanner_example/page/change_notify_page.dart';
+import 'package:image_scanner_example/page/home_page.dart';
 
-import 'change_notify_page.dart';
 import 'developer/develop_index_page.dart';
-import 'home_page.dart';
 import 'save_image_example.dart';
 
 class IndexPage extends StatefulWidget {
-  const IndexPage({Key? key}) : super(key: key);
-
   @override
-  State<IndexPage> createState() => _IndexPageState();
+  _IndexPageState createState() => _IndexPageState();
 }
 
 class _IndexPageState extends State<IndexPage> {
@@ -19,22 +15,32 @@ class _IndexPageState extends State<IndexPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Example for photo manager.'),
+        title: Text("Example for photo manager."),
       ),
       body: ListView(
-        padding: const EdgeInsets.all(8.0),
         children: <Widget>[
-          routePage('Gallery list', const NewHomePage()),
-          routePage('Custom filter example', const CustomFilterExamplePage()),
-          routePage('Save media example', const SaveMediaExample()),
-          routePage('Change notify example', const ChangeNotifyExample()),
-          routePage('For Developer page', const DeveloperIndexPage()),
+          routePage("gallery list", NewHomePage()),
+          routePage("save media example", SaveMediaExample()),
+          routePage("For Developer page", DeveloperIndexPage()),
+          routePage("Change notify example", ChangeNotifyExample()),
         ],
       ),
     );
   }
 
   Widget routePage(String title, Widget page) {
-    return NavButton(title: title, page: page);
+    return ElevatedButton(
+      onPressed: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (BuildContext context) {
+              return page;
+            },
+          ),
+        );
+      },
+      child: Text(title),
+    );
   }
 }

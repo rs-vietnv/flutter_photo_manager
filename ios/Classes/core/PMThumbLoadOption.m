@@ -1,3 +1,7 @@
+//
+// Created by jinglong cai on 2020/9/25.
+//
+
 #import "PMThumbLoadOption.h"
 
 @implementation PMThumbLoadOption {

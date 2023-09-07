@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:image_scanner_example/page/detail_page.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:photo_manager/photo_manager.dart';
 
-import '../detail_page.dart';
-
 class CreateEntityById extends StatefulWidget {
-  const CreateEntityById({Key? key}) : super(key: key);
-
   @override
-  State<CreateEntityById> createState() => _CreateEntityByIdState();
+  _CreateEntityByIdState createState() => _CreateEntityByIdState();
 }
 
 class _CreateEntityByIdState extends State<CreateEntityById> {
@@ -24,43 +21,41 @@ class _CreateEntityByIdState extends State<CreateEntityById> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Create AssetEntity by id'),
+        title: Text('Create AssetEntity by id'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          children: <Widget>[
-            TextField(
-              controller: controller,
-              decoration: const InputDecoration(
-                hintText: 'input asset id',
-              ),
+      body: Column(
+        children: <Widget>[
+          TextField(
+            controller: controller,
+            decoration: InputDecoration(
+              hintText: "input asset id",
             ),
-            ElevatedButton(
-              onPressed: createAssetEntityAndShow,
-              child: const Text('Create assetEntity'),
-            ),
-          ],
-        ),
+          ),
+          ElevatedButton(
+            child: Text('Create assetEntity'),
+            onPressed: createAssetEntityAndShow,
+          ),
+        ],
       ),
     );
   }
 
-  Future<void> createAssetEntityAndShow() async {
-    final String id = controller.text.trim();
-    final AssetEntity? asset = await AssetEntity.fromId(id);
+  void createAssetEntityAndShow() async {
+    final id = controller.text.trim();
+    final asset = await AssetEntity.fromId(id);
     if (asset == null) {
-      showToast('Cannot create asset by $id');
+      showToast("Cannot create asset by $id");
       return;
     }
+    final mediaUrl = await asset.getMediaUrl();
 
-    if (!mounted) {
-      return;
-    }
-    return Navigator.push<void>(
+    Navigator.push(
       context,
-      MaterialPageRoute<void>(
-        builder: (BuildContext c) => DetailPage(entity: asset),
+      MaterialPageRoute(
+        builder: (c) => DetailPage(
+          entity: asset,
+          mediaUrl: mediaUrl,
+        ),
       ),
     );
   }

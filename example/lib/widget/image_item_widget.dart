@@ -1,121 +1,98 @@
-import 'package:flutter/material.dart';
-import 'package:photo_manager/photo_manager.dart';
+import 'dart:typed_data';
 
-class ImageItemWidget extends StatelessWidget {
+import 'package:flutter/material.dart';
+import 'package:image_scanner_example/core/lru_map.dart';
+import 'package:image_scanner_example/model/photo_provider.dart';
+import 'package:image_scanner_example/widget/change_notifier_builder.dart';
+import 'package:image_scanner_example/widget/loading_widget.dart';
+import 'package:photo_manager/photo_manager.dart';
+import 'package:provider/provider.dart';
+
+class ImageItemWidget extends StatefulWidget {
   const ImageItemWidget({
     Key? key,
     required this.entity,
     required this.option,
-    this.onTap,
   }) : super(key: key);
 
   final AssetEntity entity;
-  final ThumbnailOption option;
-  final GestureTapCallback? onTap;
+  final ThumbOption option;
 
-  Widget buildContent(BuildContext context) {
-    if (entity.type == AssetType.audio) {
-      return const Center(
-        child: Icon(Icons.audiotrack, size: 30),
-      );
-    }
-    return _buildImageWidget(context, entity, option);
+  @override
+  _ImageItemWidgetState createState() => _ImageItemWidgetState();
+}
+
+class _ImageItemWidgetState extends State<ImageItemWidget> {
+  @override
+  Widget build(BuildContext context) {
+    final provider = Provider.of<PhotoProvider>(context);
+    return ChangeNotifierBuilder(
+      builder: (c, p) {
+        final format = provider.thumbFormat;
+        return buildContent(format);
+      },
+      value: provider,
+    );
   }
 
-  Widget _buildImageWidget(
-    BuildContext context,
-    AssetEntity entity,
-    ThumbnailOption option,
-  ) {
-    return Stack(
-      children: <Widget>[
-        Positioned.fill(
-          child: AssetEntityImage(
-            entity,
-            isOriginal: false,
-            thumbnailSize: option.size,
-            thumbnailFormat: option.format,
-            fit: BoxFit.cover,
-          ),
+  Widget buildContent(ThumbFormat format) {
+    if (widget.entity.type == AssetType.audio) {
+      return Center(
+        child: Icon(
+          Icons.audiotrack,
+          size: 30,
         ),
-        PositionedDirectional(
-          bottom: 4,
-          start: 0,
-          end: 0,
-          child: Row(
-            children: [
-              if (entity.isFavorite)
-                Container(
-                  padding: const EdgeInsets.all(4),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).cardColor,
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(
-                    Icons.favorite,
-                    color: Colors.redAccent,
-                    size: 16,
-                  ),
-                ),
-              Expanded(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    if (entity.isLivePhoto)
-                      Container(
-                        margin: const EdgeInsetsDirectional.only(end: 4),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 3,
-                          vertical: 1,
-                        ),
-                        decoration: BoxDecoration(
-                          borderRadius: const BorderRadius.all(
-                            Radius.circular(4),
-                          ),
-                          color: Theme.of(context).cardColor,
-                        ),
-                        child: const Text(
-                          'LIVE',
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 10,
-                            fontWeight: FontWeight.bold,
-                            height: 1,
-                          ),
-                        ),
-                      ),
-                    Icon(
-                      () {
-                        switch (entity.type) {
-                          case AssetType.other:
-                            return Icons.abc;
-                          case AssetType.image:
-                            return Icons.image;
-                          case AssetType.video:
-                            return Icons.video_file;
-                          case AssetType.audio:
-                            return Icons.audiotrack;
-                        }
-                      }(),
-                      color: Colors.white,
-                      size: 16,
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
+      );
+    }
+    final item = widget.entity;
+    final size = widget.option.width;
+    final u8List = ImageLruCache.getData(item, size, format);
+
+    Widget image;
+
+    if (u8List != null) {
+      return _buildImageWidget(item, u8List, size);
+    } else {
+      image = FutureBuilder<Uint8List?>(
+        future: item.thumbDataWithOption(widget.option),
+        builder: (context, snapshot) {
+          Widget w;
+          if (snapshot.hasError) {
+            w = Center(
+              child: Text("load error, error: ${snapshot.error}"),
+            );
+          }
+          if (snapshot.hasData) {
+            ImageLruCache.setData(item, size, format, snapshot.data!);
+            w = _buildImageWidget(item, snapshot.data!, size);
+          } else {
+            w = Center(
+              child: loadWidget,
+            );
+          }
+
+          return w;
+        },
+      );
+    }
+
+    return image;
+  }
+
+  Widget _buildImageWidget(AssetEntity entity, Uint8List uint8list, num size) {
+    return Image.memory(
+      uint8list,
+      width: size.toDouble(),
+      height: size.toDouble(),
+      fit: BoxFit.cover,
     );
   }
 
   @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      behavior: HitTestBehavior.opaque,
-      onTap: onTap,
-      child: buildContent(context),
-    );
+  void didUpdateWidget(ImageItemWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.entity.id != oldWidget.entity.id) {
+      setState(() {});
+    }
   }
 }

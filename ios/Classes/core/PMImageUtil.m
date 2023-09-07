@@ -2,6 +2,8 @@
 //  PMImageUtil.m
 //  path_provider_macos
 //
+//  Created by jinglong cai on 2021/4/12.
+//
 
 #import "PMImageUtil.h"
 

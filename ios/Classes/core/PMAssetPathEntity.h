@@ -1,21 +1,25 @@
+//
+// Created by Caijinglong on 2019-09-06.
+//
+
 #import <Foundation/Foundation.h>
 
 #define PM_TYPE_ALBUM 1
 #define PM_TYPE_FOLDER 2
 @class PHAsset;
-@class PHAssetCollection;
 
 @interface PMAssetPathEntity : NSObject
 
 @property(nonatomic, copy) NSString *id;
 @property(nonatomic, copy) NSString *name;
+@property(nonatomic, assign) NSUInteger assetCount;
 @property(nonatomic, assign) BOOL isAll;
 @property(nonatomic, assign) int type;
-@property(nonatomic, assign) NSUInteger assetCount;
 @property(nonatomic, assign) long modifiedDate;
-@property(nonatomic, strong) PHAssetCollection *collection;
 
-+ (instancetype)entityWithId:(NSString *)id name:(NSString *)name assetCollection:(PHAssetCollection*)collection;
+- (instancetype)initWithId:(NSString *)id name:(NSString *)name assetCount:(NSUInteger)assetCount;
+
++ (instancetype)entityWithId:(NSString *)id name:(NSString *)name assetCount:(NSUInteger)assetCount;
 
 @end
 
@@ -32,7 +36,6 @@
 @property(nonatomic, assign) double lat;
 @property(nonatomic, assign) double lng;
 @property(nonatomic, copy) NSString *title;
-@property(nonatomic, assign) NSUInteger subtype;
 @property(nonatomic, assign) BOOL favorite;
 @property(nonatomic, assign) BOOL isLocallyAvailable;
 

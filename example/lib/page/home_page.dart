@@ -1,21 +1,17 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:image_scanner_example/model/photo_provider.dart';
+import 'package:image_scanner_example/page/gallery_list_page.dart';
+import 'package:image_scanner_example/widget/change_notifier_builder.dart';
 import 'package:photo_manager/photo_manager.dart';
-import 'package:photo_manager_example/widget/nav_button.dart';
 import 'package:provider/provider.dart';
 
-import '../model/photo_provider.dart';
-import '../widget/change_notifier_builder.dart';
 import 'filter_option_page.dart';
-import 'gallery_list_page.dart';
 
 class NewHomePage extends StatefulWidget {
-  const NewHomePage({Key? key}) : super(key: key);
-
   @override
-  State<NewHomePage> createState() => _NewHomePageState();
+  _NewHomePageState createState() => _NewHomePageState();
 }
 
 class _NewHomePageState extends State<NewHomePage> {
@@ -32,42 +28,35 @@ class _NewHomePageState extends State<NewHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierBuilder<PhotoProvider>(
+    return ChangeNotifierBuilder(
       value: watchProvider,
       builder: (_, __) => Scaffold(
         appBar: AppBar(
-          title: const Text('photo manager example'),
+          title: Text("photo manager example"),
         ),
         body: ListView(
-          padding: const EdgeInsets.all(8.0),
           children: <Widget>[
-            CustomButton(
-              title: 'Get all gallery list',
-              onPressed: _scanGalleryList,
-            ),
+            buildButton("Get all gallery list", _scanGalleryList),
             if (Platform.isIOS)
-              CustomButton(
-                title: 'Change limited photos with PhotosUI',
-                onPressed: _changeLimitPhotos,
+              buildButton(
+                "Change limited photos with PhotosUI",
+                _changeLimitPhotos,
               ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                const Text('scan type'),
+                Text("scan type"),
                 Container(width: 10),
               ],
             ),
             _buildTypeChecks(watchProvider),
             _buildHasAllCheck(),
             _buildOnlyAllCheck(),
-            _buildContainsLivePhotos(),
-            _buildOnlyLivePhotos(),
+            _buildContainsEmptyCheck(),
             _buildPathContainsModifiedDateCheck(),
             _buildPngCheck(),
             _buildNotifyCheck(),
             _buildFilterOption(watchProvider),
-            if (Platform.isIOS || Platform.isMacOS)
-              _buildPathFilterOption(),
           ],
         ),
       ),
@@ -75,23 +64,23 @@ class _NewHomePageState extends State<NewHomePage> {
   }
 
   Widget _buildTypeChecks(PhotoProvider provider) {
-    final RequestType currentType = provider.type;
+    final currentType = provider.type;
     Widget buildType(RequestType type) {
       String typeText;
       if (type.containsImage()) {
-        typeText = 'image';
+        typeText = "image";
       } else if (type.containsVideo()) {
-        typeText = 'video';
+        typeText = "video";
       } else if (type.containsAudio()) {
-        typeText = 'audio';
+        typeText = "audio";
       } else {
-        typeText = '';
+        typeText = "";
       }
 
       return Expanded(
         child: CheckboxListTile(
           dense: true,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 6),
+          contentPadding: EdgeInsets.symmetric(horizontal: 6),
           title: Text(typeText),
           value: currentType.containsType(type),
           onChanged: (bool? value) {
@@ -105,7 +94,7 @@ class _NewHomePageState extends State<NewHomePage> {
       );
     }
 
-    return SizedBox(
+    return Container(
       height: 50,
       child: Row(
         children: <Widget>[
@@ -117,126 +106,96 @@ class _NewHomePageState extends State<NewHomePage> {
     );
   }
 
-  Future<void> _scanGalleryList() async {
+  _scanGalleryList() async {
     await readProvider.refreshGalleryList();
-    if (!mounted) {
-      return;
-    }
 
-    Navigator.push<void>(
-      context,
-      MaterialPageRoute<void>(
-        builder: (BuildContext ctx) => const GalleryListPage(),
-      ),
-    );
+    final page = GalleryListPage();
+
+    Navigator.of(context).push(MaterialPageRoute(
+      builder: (ctx) => page,
+    ));
   }
 
   Widget _buildHasAllCheck() {
     return CheckboxListTile(
       value: watchProvider.hasAll,
-      onChanged: (bool? value) {
+      onChanged: (value) {
         readProvider.changeHasAll(value);
       },
-      title: const Text('hasAll'),
+      title: Text("hasAll"),
     );
   }
 
   Widget _buildPngCheck() {
     return CheckboxListTile(
-      value: watchProvider.thumbFormat == ThumbnailFormat.png,
-      onChanged: (bool? value) {
+      value: watchProvider.thumbFormat == ThumbFormat.png,
+      onChanged: (value) {
         readProvider.changeThumbFormat();
       },
-      title: const Text('thumb png'),
+      title: Text("thumb png"),
     );
   }
 
   Widget _buildOnlyAllCheck() {
     return CheckboxListTile(
       value: watchProvider.onlyAll,
-      onChanged: (bool? value) {
+      onChanged: (value) {
         readProvider.changeOnlyAll(value);
       },
-      title: const Text('onlyAll'),
+      title: Text("onlyAll"),
     );
   }
 
-  Widget _buildContainsLivePhotos() {
-    if (Platform.isAndroid) {
+  Widget _buildContainsEmptyCheck() {
+    if (!Platform.isIOS) {
       return Container();
     }
     return CheckboxListTile(
-      value: watchProvider.containsLivePhotos,
-      onChanged: (bool? value) {
-        if (value != null) {
-          readProvider.containsLivePhotos = value;
-        }
+      value: watchProvider.containsEmptyAlbum,
+      onChanged: (value) {
+        readProvider.changeContainsEmptyAlbum(value);
       },
-      title: const Text('Contains Live Photos'),
-    );
-  }
-
-  Widget _buildOnlyLivePhotos() {
-    if (Platform.isAndroid) {
-      return Container();
-    }
-    return CheckboxListTile(
-      value: watchProvider.onlyLivePhotos,
-      onChanged: (bool? value) {
-        if (value != null) {
-          readProvider.onlyLivePhotos = value;
-        }
-      },
-      title: const Text('Only Live Photos'),
+      title: Text("contains empty album(only iOS)"),
     );
   }
 
   Widget _buildPathContainsModifiedDateCheck() {
     return CheckboxListTile(
       value: watchProvider.containsPathModified,
-      onChanged: (bool? value) {
+      onChanged: (value) {
         readProvider.changeContainsPathModified(value);
       },
-      title: const Text('contains path modified date'),
+      title: Text("contains path modified date"),
     );
   }
 
   Widget _buildNotifyCheck() {
     return CheckboxListTile(
-      value: watchProvider.notifying,
-      title: const Text('onChanged'),
-      onChanged: (bool? value) {
-        if (value == true) {
-          PhotoManager.startChangeNotify();
-        } else {
-          PhotoManager.stopChangeNotify();
-        }
-        readProvider.notifying = value;
-      },
-    );
+        value: watchProvider.notifying,
+        title: Text("onChanged"),
+        onChanged: (value) {
+          readProvider.notifying = value;
+          if (value == true) {
+            PhotoManager.startChangeNotify();
+          } else {
+            PhotoManager.stopChangeNotify();
+          }
+        });
   }
 
-  void onChange(MethodCall call) {}
+  void onChange(call) {}
 
   Widget _buildFilterOption(PhotoProvider provider) {
-    return CustomButton(
-      title: 'Change filter options.',
+    return ElevatedButton(
+      child: Text("Change filter options."),
       onPressed: () {
-        Navigator.push<void>(
+        Navigator.push(
           context,
-          MaterialPageRoute<void>(builder: (_) => const FilterOptionPage()),
-        );
-      },
-    );
-  }
-
-  Widget _buildPathFilterOption() {
-    return CustomButton(
-      title: 'Change path filter options.',
-      onPressed: () {
-        Navigator.push<void>(
-          context,
-          MaterialPageRoute<void>(builder: (_) => const DarwinPathFilterPage()),
+          MaterialPageRoute(
+            builder: (BuildContext context) {
+              return FilterOptionPage();
+            },
+          ),
         );
       },
     );
@@ -245,4 +204,11 @@ class _NewHomePageState extends State<NewHomePage> {
   Future<void> _changeLimitPhotos() async {
     await PhotoManager.presentLimited();
   }
+}
+
+Widget buildButton(String text, VoidCallback function) {
+  return ElevatedButton(
+    child: Text(text),
+    onPressed: function,
+  );
 }

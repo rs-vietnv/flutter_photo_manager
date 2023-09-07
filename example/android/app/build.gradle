@@ -32,10 +32,6 @@ apply plugin: 'kotlin-kapt'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
 android {
-    namespace 'com.fluttercandies.photo_manager_example'
-
-    compileSdkVersion compileVersion.toInteger()
-
     signingConfigs {
         release {
             storeFile file("${rootDir.absolutePath}/photo-manager-keystore")
@@ -44,6 +40,8 @@ android {
             keyPassword '123456'
         }
     }
+
+    compileSdkVersion 33
 
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
@@ -54,22 +52,19 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.fluttercandies.photo_manager_example"
-        minSdkVersion 21
-        targetSdkVersion compileVersion.toInteger()
+        applicationId "com.fluttercandies.photo_managerexample"
+        minSdkVersion 16
+        targetSdkVersion 33
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
         multiDexEnabled true
     }
 
     buildTypes {
-        debug {
-            signingConfig signingConfigs.release
-        }
-        profile {
-            signingConfig signingConfigs.release
-        }
         release {
+            signingConfig signingConfigs.release
+        }
+        debug {
             signingConfig signingConfigs.release
         }
     }
@@ -80,6 +75,9 @@ flutter {
 }
 
 dependencies {
-    implementation 'com.github.bumptech.glide:glide:4.15.1'
-    kapt 'com.github.bumptech.glide:compiler:4.15.1'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+    implementation 'com.github.bumptech.glide:glide:4.11.0'
+    kapt 'com.github.bumptech.glide:compiler:4.11.0'
+    testImplementation 'junit:junit:4.13'
+    implementation 'androidx.multidex:multidex:2.0.1'
 }

@@ -1,4 +1,4 @@
-2020-09-23 13:56:03.749 9627-9689/top.kikt.imagescannerexample D/PhotoManagerPluginLogger: 
+2020-09-23 13:56:03.749 9627-9689/com.fluttercandies.photo_managerexample D/PhotoManagerPluginLogger: 
 id: 540528482
     |--instance_id : null
     |--compilation : null
@@ -47,7 +47,7 @@ id: 540528482
     |--num_tracks : null
     |--original_document_id : null
     |--media_type : 1
-2020-09-23 13:56:03.749 9627-9689/top.kikt.imagescannerexample D/PhotoManagerPluginLogger: id: 540528482
+2020-09-23 13:56:03.749 9627-9689/com.fluttercandies.photo_managerexample D/PhotoManagerPluginLogger: id: 540528482
     |--instance_id : null
     |--compilation : null
     |--disc_number : null

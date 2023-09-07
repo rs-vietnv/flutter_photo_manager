@@ -1,9 +1,9 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
+import 'package:image_scanner_example/model/photo_provider.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:provider/provider.dart';
-
-import '../model/photo_provider.dart';
-import '../util/log.dart';
 
 class CopyToAnotherGalleryPage extends StatefulWidget {
   const CopyToAnotherGalleryPage({
@@ -14,7 +14,7 @@ class CopyToAnotherGalleryPage extends StatefulWidget {
   final AssetEntity assetEntity;
 
   @override
-  State<CopyToAnotherGalleryPage> createState() =>
+  _CopyToAnotherGalleryPageState createState() =>
       _CopyToAnotherGalleryPageState();
 }
 
@@ -23,49 +23,34 @@ class _CopyToAnotherGalleryPageState extends State<CopyToAnotherGalleryPage> {
 
   @override
   Widget build(BuildContext context) {
-    final PhotoProvider provider =
-        Provider.of<PhotoProvider>(context, listen: false);
-    final List<AssetPathEntity> list = provider.list;
+    final provider = Provider.of<PhotoProvider>(context, listen: false);
+    final list = provider.list;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('move to another'),
+        title: Text("move to another"),
       ),
       body: Column(
         children: <Widget>[
           AspectRatio(
             aspectRatio: 1,
-            child: AssetEntityImage(
-              widget.assetEntity,
-              thumbnailSize: const ThumbnailSize.square(500),
-              loadingBuilder: (_, Widget child, ImageChunkEvent? progress) {
-                if (progress == null) {
-                  return child;
+            child: FutureBuilder<Uint8List?>(
+              future: widget.assetEntity.thumbDataWithSize(500, 500),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return Image.memory(snapshot.data!);
                 }
-                final double? value;
-                if (progress.expectedTotalBytes != null) {
-                  value = progress.cumulativeBytesLoaded /
-                      progress.expectedTotalBytes!;
-                } else {
-                  value = null;
-                }
-                return Center(
-                  child: SizedBox.fromSize(
-                    size: const Size.square(40),
-                    child: CircularProgressIndicator(value: value),
-                  ),
-                );
+                return Text("loading");
               },
             ),
           ),
           DropdownButton<AssetPathEntity>(
-            onChanged: (AssetPathEntity? value) {
-              targetGallery = value;
+            onChanged: (value) {
+              this.targetGallery = value;
               setState(() {});
             },
             value: targetGallery,
-            hint: const Text('Select target gallery'),
-            items: list
-                .map<DropdownMenuItem<AssetPathEntity>>((AssetPathEntity item) {
+            hint: Text("Select target gallery"),
+            items: list.map<DropdownMenuItem<AssetPathEntity>>((item) {
               return _buildItem(item);
             }).toList(),
           ),
@@ -82,16 +67,16 @@ class _CopyToAnotherGalleryPageState extends State<CopyToAnotherGalleryPage> {
     );
   }
 
-  Future<void> _copy() async {
+  void _copy() async {
     if (targetGallery == null) {
-      return;
+      return null;
     }
-    final AssetEntity? result = await PhotoManager.editor.copyAssetToPath(
+    final result = await PhotoManager.editor.copyAssetToPath(
       asset: widget.assetEntity,
-      pathEntity: targetGallery!,
+      pathEntity: this.targetGallery!,
     );
 
-    Log.d('copy result = $result');
+    print("copy result = $result");
   }
 
   Widget _buildCopyButton() {
@@ -99,8 +84,8 @@ class _CopyToAnotherGalleryPageState extends State<CopyToAnotherGalleryPage> {
       onPressed: _copy,
       child: Text(
         targetGallery == null
-            ? 'Please select gallery'
-            : 'copy to ${targetGallery!.name}',
+            ? "Please select gallery"
+            : "copy to ${targetGallery!.name}",
       ),
     );
   }
