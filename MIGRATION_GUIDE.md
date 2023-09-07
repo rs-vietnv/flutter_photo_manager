@@ -3,35 +3,9 @@
 The document only describes the equivalent changes to the API.
 If you want to see the new feature support, please refer to [readme][] and [change log][].
 
-- [2.x to 2.2](#2x-to-22)
 - [1.x to 2.0](#1x-to-20)
 - [0.6 to 1.0](#06-to-10)
 - [0.5 To 0.6](#05-to-06)
-
-## 2.x to 2.2
-
-### Overall
-
-- `AssetPathEntity.assetCount` has been deprecated, and added a new asynchronized getter `assetCountAsync`.
-- `FilterOptionGroup.containsEmptyAlbum` has been removed.
-
-#### `assetCount`
-
-Before you can easily access total count of a path:
-
-```dart
-int get count => path.assetCount;
-```
-
-Now you can only use the new getter:
-
-```dart
-int count = await path.assetCountAsync;
-```
-
-Be aware that the change is to improve when gathering info from paths,
-which means usages with the previous field should be migrated to
-separate requests to improve the performance.
 
 ## 1.x to 2.0
 
@@ -77,13 +51,11 @@ If you've used these APIs, consider migrating them to the latest version.
 #### `getAssetListPaged`
 
 Before:
-
 ```dart
 AssetPathEntity.getAssetListPaged(0, 50);
 ```
 
 After:
-
 ```dart
 AssetPathEntity.getAssetListPaged(page: 0, size: 50);
 ```
@@ -91,13 +63,11 @@ AssetPathEntity.getAssetListPaged(page: 0, size: 50);
 #### Filtering only videos
 
 Before:
-
 ```dart
 final List<AssetPathEntity> paths = PhotoManager.getAssetPathList(type: RequestType.video);
 ```
 
 After:
-
 ```dart
 final List<AssetPathEntity> paths = PhotoManager.getAssetPathList(
   type: RequestType.video,
@@ -108,13 +78,11 @@ final List<AssetPathEntity> paths = PhotoManager.getAssetPathList(
 #### `isLocallyAvailable`
 
 Before:
-
 ```dart
 final bool isLocallyAvailable = await entity.isLocallyAvailable;
 ```
 
 After:
-
 ```dart
 // .file is locally available.
 final bool isFileLocallyAvailable = await entity.isLocallyAvailable();
@@ -128,19 +96,17 @@ final bool isOriginFileLocallyAvailable = await entity.isLocallyAvailable(
 #### iOS Editor favorite asset
 
 Before:
-
 ```dart
-final bool isSucceed = await PhotoManager.editor.darwin.favoriteAsset(
+final bool isSucceed = await PhotoManager.editor.iOS.favoriteAsset(
   entity: entity,
   favorite: true,
 );
 ```
 
 After:
-
 ```dart
 /// If succeed, a new entity will be returned.
-final AssetEntity? newEntity = await PhotoManager.editor.darwin.favoriteAsset(
+final AssetEntity? newEntity = await PhotoManager.editor.iOS.favoriteAsset(
   entity: entity,
   favorite: true,
 );
