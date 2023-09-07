@@ -1,123 +1,111 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:image_scanner_example/util/common_util.dart';
+import 'package:image_scanner_example/widget/video_widget.dart';
 import 'package:photo_manager/photo_manager.dart';
 
-import '../util/common_util.dart';
-import '../widget/live_photos_widget.dart';
-import '../widget/video_widget.dart';
-
 class DetailPage extends StatefulWidget {
-  const DetailPage({Key? key, required this.entity}) : super(key: key);
+  const DetailPage({
+    Key? key,
+    required this.entity,
+    this.mediaUrl,
+  }) : super(key: key);
 
   final AssetEntity entity;
+  final String? mediaUrl;
 
   @override
-  State<DetailPage> createState() => _DetailPageState();
+  _DetailPageState createState() => _DetailPageState();
 }
 
 class _DetailPageState extends State<DetailPage> {
   bool? useOrigin = true;
-  bool? useMediaUrl = true;
 
   @override
   Widget build(BuildContext context) {
+    final originCheckbox = CheckboxListTile(
+      title: Text("Use origin file."),
+      onChanged: (value) {
+        this.useOrigin = value;
+        setState(() {});
+      },
+      value: useOrigin,
+    );
+    final children = <Widget>[
+      Container(
+        color: Colors.black,
+        child: _buildContent(),
+      ),
+    ];
+
+    if (widget.entity.type == AssetType.image) {
+      children.insert(0, originCheckbox);
+    }
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Asset detail'),
+        title: Text("Asset detail"),
         actions: <Widget>[
           IconButton(
-            icon: const Icon(Icons.info),
+            icon: Icon(Icons.info),
             onPressed: _showInfo,
           ),
         ],
       ),
-      body: Column(
-        children: <Widget>[
-          if (widget.entity.type == AssetType.image)
-            CheckboxListTile(
-              title: const Text('Use origin file.'),
-              onChanged: (bool? value) {
-                useOrigin = value;
-                setState(() {});
-              },
-              value: useOrigin,
-            ),
-          if (widget.entity.type == AssetType.video)
-            CheckboxListTile(
-              title: const Text('Use Media Url'),
-              value: useMediaUrl,
-              onChanged: (bool? value) {
-                useMediaUrl = value;
-                setState(() {});
-              },
-            ),
-          Expanded(
-            child: Container(
-              alignment: Alignment.center,
-              color: Colors.black,
-              child: _buildContent(),
-            ),
-          ),
-        ],
+      body: ListView(
+        children: children,
       ),
     );
   }
 
   Widget _buildContent() {
-    if (widget.entity.isLivePhoto) {
-      return LivePhotosWidget(
-        entity: widget.entity,
-        useOrigin: useOrigin == true,
-      );
-    }
-    if (widget.entity.type == AssetType.video ||
-        widget.entity.type == AssetType.audio ||
-        widget.entity.isLivePhoto) {
+    if (widget.entity.type == AssetType.video) {
       return buildVideo();
+    } else if (widget.entity.type == AssetType.audio) {
+      return buildVideo();
+    } else {
+      return buildImage();
     }
-    return buildImage();
   }
 
   Widget buildImage() {
-    return AssetEntityImage(
-      widget.entity,
-      isOriginal: useOrigin == true,
-      fit: BoxFit.fill,
-      loadingBuilder: (
-        BuildContext context,
-        Widget child,
-        ImageChunkEvent? progress,
-      ) {
-        if (progress == null) {
-          return child;
+    return FutureBuilder<File?>(
+      future: useOrigin == true ? widget.entity.originFile : widget.entity.file,
+      builder: (_, snapshot) {
+        if (snapshot.data == null) {
+          return Center(
+            child: SizedBox(
+              width: 30,
+              height: 30,
+              child: CircularProgressIndicator(),
+            ),
+          );
         }
-        final double? value;
-        if (progress.expectedTotalBytes != null) {
-          value = progress.cumulativeBytesLoaded / progress.expectedTotalBytes!;
-        } else {
-          value = null;
-        }
-        return Center(
-          child: SizedBox.fromSize(
-            size: const Size.square(30),
-            child: CircularProgressIndicator(value: value),
-          ),
-        );
+        return Image.file(snapshot.data!);
       },
     );
   }
 
   Widget buildVideo() {
+    if (widget.mediaUrl == null) {
+      return const SizedBox.shrink();
+    }
     return VideoWidget(
-      entity: widget.entity,
-      usingMediaUrl: useMediaUrl ?? true,
+      isAudio: widget.entity.type == AssetType.audio,
+      mediaUrl: widget.mediaUrl!,
     );
   }
 
-  Future<void> _showInfo() {
-    return CommonUtil.showInfoDialog(context, widget.entity);
+  void _showInfo() async {
+    await CommonUtil.showInfoDialog(context, widget.entity);
   }
 
   Widget buildAudio() {
-    return const Center(child: Icon(Icons.audiotrack));
+    return Container(
+      child: Center(
+        child: Icon(Icons.audiotrack),
+      ),
+    );
   }
 }

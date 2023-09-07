@@ -16,12 +16,10 @@ class ChangeNotifierBuilder<T extends ChangeNotifier> extends StatefulWidget {
   final T value;
 
   @override
-  State<ChangeNotifierBuilder<T>> createState() =>
-      _ChangeNotifierBuilderState<T>();
+  _ChangeNotifierBuilderState createState() => _ChangeNotifierBuilderState();
 }
 
-class _ChangeNotifierBuilderState<T extends ChangeNotifier>
-    extends State<ChangeNotifierBuilder<T>> {
+class _ChangeNotifierBuilderState extends State<ChangeNotifierBuilder> {
   @override
   void initState() {
     super.initState();
