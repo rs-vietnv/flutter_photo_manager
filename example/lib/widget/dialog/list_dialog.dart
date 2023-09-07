@@ -17,8 +17,8 @@ class _ListDialogState extends State<ListDialog> {
   Widget build(BuildContext context) {
     return Center(
       child: ListView(
-        shrinkWrap: true,
         children: widget.children,
+        shrinkWrap: true,
       ),
     );
   }

@@ -1,103 +1,74 @@
 # CHANGELOG
 
-## 2.0.0
-
-A major version release for performance improvements, new features, issues fixed, and breaking changes.
-Also, the LICENSE has been updated with the new author [FlutterCandies](https://github.com/fluttercandies).
-To know more about breaking changes, see the [Migration Guide][].
-
-Features:
-- Add `mimeTypeAsync`. (#717)
-- Add `ThumbnailSize`. (#709)
-- Add `DurationConstraint.allowNullable`. (#681)
-- Introduce `AssetEntityImageProvider`. (#669, #709)
-- Support "Live Photos" with obtaining and filtering. (#667, #670, #673, #719)
-- Support to obtain the first frame for the video thumbnail on Android. (#658)
-- Allow plugin to be mocked/overridden with tests. (#703)
-
-Improvements:
-- Improve path modified injection and asset count fetching. (#712)
-- Make all entities immutable. (#708)
-- Improve the performance when using the `file` getter on iOS. (#705)
-- Force legacy storage on Android Q. (#701)
-- Enhance request types filtering.
-- Compile for API 31 on Android.
-- Throw when obtaining media URL that asset is not locally available on iOS.
-- Retrieve width/height from ExifInterface for fallback on Android. (#686)
-- Request `WRITE_EXTERNAL_STORAGE` only when needed. (#675)
-- Provided a single-page example. (#672)
-- Improve the default sort order on all platforms. (#659)
-- Add equality comparison for various classes. (#657)
-- Run Glide on the current thread on Android. (#656)
-- Improve thread pool on Android. (#637)
-- Improved all documents and code formats. (#626, #660, #664, #671)
-- Reorganized all internal structures.
-- Rename org to `com.fluttercandies`. (#624)
-- `ImageScanner` -> `PhotoManager`. (#611)
-
-Fixes:
-- Fix `Activity` leaks when detached on Android. (#716)
-- Fix potential NPE when moving assets on Android.
-- Fix edited images/videos are not returned correctly on iOS. (#622, #636)
-- Fix `title` argument causes saving methods failed. (#619, #635)
-- Fix `PhotoManager.editor.copyAssetToPath` returns `null`. (#619)
-- Fix sort order issues on iOS/macOS. (#603, #655)
-
-## 1.3.10
-
-Improvements:
-- Allow all kinds of `PHAssetCollection` which should expand the support for shared albums. (#641)
-
-## 1.3.9+1
-
-Fixes:
-- Fix compile error on Xcode 12 for iOS 14. (#630)
-
-## 1.3.9
-
-Fixes:
-- Fix `presentLimited` issues on iOS 14 real devices. (#627)
-
-## 1.3.8
-
-Improvements:
-- Improve sort orders on all platforms. (#623)
-
-## 1.3.7
-
-Improvements:
-- Improve sort orders on iOS. (#620)
-
-## 1.3.6
-
-Improvements:
-- Prettify file name on iOS. (#615)
-
-## 1.3.5
-
-Improvements:
-- Support `presentLimited` with the new API on iOS 15. (#609)
-
-## 1.3.4
-
-Improvements:
-- Obtain more albums on iOS/macOS. (#601)
-
-## 1.3.3
-
-Improvements:
-- Loosen comparison between `AssetEntity`s.
-
-## 1.3.2
-
-Improvements:
-- Apply more fields to compare between entities.
-
-## 1.3.1
-
-Fixes:
-- `fetchPathProperties` returned wrong `isAll` on iOS. (#580)
-- `updateTimeCond` not constructed correctly with `FilterOptionGroup`.
+- [CHANGELOG](#changelog)
+  - [1.3.0](#130)
+  - [1.2.9](#129)
+  - [1.2.8](#128)
+  - [1.2.7](#127)
+  - [1.2.6+1](#1261)
+  - [1.2.6](#126)
+  - [1.2.5](#125)
+  - [1.2.4](#124)
+  - [1.2.3](#123)
+  - [1.2.2](#122)
+  - [1.2.1](#121)
+  - [1.2.0](#120)
+  - [1.1.6](#116)
+  - [1.1.5](#115)
+  - [1.1.4](#114)
+  - [1.1.3](#113)
+  - [1.1.2](#112)
+  - [1.1.1](#111)
+  - [1.1.0](#110)
+  - [1.0.6](#106)
+  - [1.0.4](#104)
+  - [1.0.3](#103)
+  - [1.0.2](#102)
+  - [1.0.1](#101)
+  - [1.0.0](#100)
+  - [0.6.0](#060)
+  - [0.5.8](#058)
+  - [0.5.7](#057)
+  - [0.5.6](#056)
+  - [0.5.5+1](#0551)
+  - [0.5.5](#055)
+  - [0.5.4](#054)
+  - [0.5.3+1](#0531)
+  - [0.5.3](#053)
+  - [0.5.2](#052)
+  - [0.5.1](#051)
+  - [0.5.0](#050)
+  - [0.4.8](#048)
+  - [0.4.7](#047)
+  - [0.4.6](#046)
+  - [0.4.5](#045)
+  - [0.4.4](#044)
+  - [0.4.3](#043)
+  - [0.4.2](#042)
+  - [0.4.1](#041)
+  - [0.4.0](#040)
+  - [0.3.5](#035)
+  - [0.3.4](#034)
+  - [0.3.3](#033)
+  - [0.3.2](#032)
+  - [0.3.1](#031)
+  - [0.3.0](#030)
+  - [0.2.1](#021)
+  - [0.2.0](#020)
+  - [0.1.10](#0110)
+  - [0.1.9](#019)
+  - [0.1.8 sort asset by data](#018-sort-asset-by-data)
+  - [0.1.7 fix bug](#017-fix-bug)
+  - [0.1.6](#016)
+  - [0.1.5](#015)
+  - [0.1.4 fix bug](#014-fix-bug)
+  - [0.1.3 add params](#013-add-params)
+  - [0.1.2 fix bug](#012-fix-bug)
+  - [0.1.1 fix ios video](#011-fix-ios-video)
+  - [0.1.0 support video](#010-support-video)
+  - [0.0.3 fix bug](#003-fix-bug)
+  - [0.0.2 update readme](#002-update-readme)
+  - [0.0.1](#001)
 
 ## 1.3.0
 
@@ -108,7 +79,7 @@ Fixes:
 - Removed recursive calls with progress handler. (#577)
 
 We're bumping the minor version because we've achieved recent goals
-and applied multiple Fixes: which make this plugin as the most solid ever.
+and applied multiple fixes which make this plugin as the most solid ever.
 
 ## 1.2.9
 
@@ -123,82 +94,97 @@ Fixes:
 ## 1.2.7
 
 Improvements:
+
 - Improve `AssetEntity.getMediaUrl()` behaviors.
 
 Fixes:
+
 - Merge all fields for `FilterOptionGroup`.
 - Make `AssetEntity.isLocallyAvailable` as a `Future` getter.
 
 ## 1.2.6+1
 
 Fixes:
-- Apply further fix to #559 .
+
+- Apply further fix to [#559](../../pull/559).
 - Repo cleanup.
 
 ## 1.2.6
 
 Fixes:
-- #558
-- #559
-- #560
+
+- [#558](../../pull/558).
+- [#559](../../pull/559).
+- [#560](../../pull/560).
 
 ## 1.2.5
 
-Fixes:
+Fix:
+
 - Fix `open` setting for macOS.
 - Fix `setLog` for iOS and macOS.
 
 ## 1.2.4
 
-Fixes:
+Fix:
+
 - `saveImage` method missing file extension for the fallback title.
 - `openSettings` method.
 
 ## 1.2.3
 
-Fixes:
+Fix:
+
 - Change notify issue on remove callback.
 - Reply result for `presentLimited` method.
 
 Feature:
+
 - Add assets count change when notify on iOS.
 - Add some properties and methods for change notify.
 
 ## 1.2.2
 
-Fixes:
-- Add request permissions result listener when activity re-attached. (#515)
+Fix:
+
+- Add request permissions result listener when activity re-attached. [#515](../../pull/515)
 
 ## 1.2.1
 
-Fixes:
-- An error of iOS. See #509 and #510 .
+Fix:
+
+- An error of iOS. See [#509](../../pull/509), [#510](../../pull/510).
 
 ## 1.2.0
 
 Feature:
+
 - Add requestPermissionExtend code to support iOS 14 permission.
 - Add update limited photos method for iOS 14.
 
-Fixes:
-- Permissions dialog of launch on old iOS versions. (#503)
+Fix:
+
+- Permissions dialog of launch on old iOS versions. [#503](../../pull/503)
 
 ## 1.1.6
 
-- The `MEDIA_LOCATION` permission of android can be removed through configuration.
+The MEDIA_LOCATION permission of android can be removed through configuration.
 
 ## 1.1.5
 
-- Revert #478 .
-- Fix thumbnail size of the entity on iOS/macOS.
+Revert [#478](../../pull/478)
+
+Fix:
+
+- Thumb size of the entity on iOS/macOS.
 
 ## 1.1.4
 
-- Merged #478 .
+Merged [#478](../../pull/478)
 
 ## 1.1.3
 
-- Merged the code of macOS and ios.
+Merged the code of macos and ios.
 
 ## 1.1.2
 
@@ -206,17 +192,14 @@ Fixes:
 
 ## 1.1.1
 
-Fixes:
-- `thumbWithSize` of `AssetEntity`.
+- Fix: `thumbWithSize` of `AssetEntity`.
 
 ## 1.1.0
 
-Feature:
-- `modified` of `AssetPathEntity`.
-- Update constructor of `FilterOptionGroup`.
+- Feature: `modified` of `AssetPathEntity`.
+- Feature: Update constructor of `FilterOptionGroup`.
 
-Fixes:
-- Order option of the `FilterOptionGroup`.
+- Fix: Order option of the `FilterOptionGroup`.
 
 ## 1.0.6
 
@@ -237,79 +220,88 @@ Fixes:
 
 ## 1.0.1
 
-- Fix orientation bug.
+- Fix
+  - orientation bug.
 
 ## 1.0.0
 
-Breaking changes:
+Breaking change:
+
 - Migrate to null safety.
 - Correct type in `PMRequestState` .
 
 ## 0.6.0
 
-Feature
-- Support android API 30.
-- Support show empty album in iOS (#365).
-- User can ignore check permission(User can choose favorite permission plugin,
-  but at the same time user have to bear the risks corresponding to the permission).
-- Support clean file cache.
-- Experimental
-  - Preload image (Use `PhotoCachingManager` api.)
-- Add `OrderOption` as sort condition. The option default value is order by create date desc;
-- Support icloud asset progress.
-  
-Fixes:
-- #362
-- Delete assets in androidQ.
-- Edited image data in iOS.
-- Fix delete error in androidR.
+- Feature
+
+  - Support android API 30.
+  - Support show empty album in iOS([#365](../../issues/365)).
+  - User can ignore check permission(User can choose favorite permission plugin, but at the same time user have to bear the risks corresponding to the permission).
+  - Support clean file cache.
+  - Experimental
+    - Preload image (Use `PhotoCachingManager` api.)
+  - Add `OrderOption` as sort condition. The option default value is order by create date desc;
+  - Support icloud asset progress.
+
+- Fixes
+  - [#362](../../issues/362)
+  - Delete assets in androidQ.
+  - Edited image data in iOS.
+  - Fix delete error in androidR.
 
 Breaking change:
-- Support multiple sorting conditions, and the `asc` of `DateTimeCond` is removed.
+
+- Feature
+  - Support multiple sorting conditions, and the `asc` of `DateTimeCond` is removed.
 
 ## 0.5.8
 
-Fixes:
-- Delete assets in androidQ.
+Fix:
+
+Delete assets in androidQ.
 
 ## 0.5.7
 
-Fixes:
-- Audio asset error for androidQ. See #340 and #341 .
+Fix:
+
+- Audio asset error for androidQ. See [#340](../../issues/340) [#341](../../pull/341).
 
 ## 0.5.6
 
-- Fix save image with path for android.
+Fix save image with path for android.
 
 ## 0.5.5+1
 
-- Remove verbose log.
+Remove verbose log.
 
 ## 0.5.5
 
-- Add `merge` for `FilterOptionGroup` and `FilterOption` .
+Add `merge` for `FilterOptionGroup` and `FilterOption` .
 
 ## 0.5.4
 
-- Add `copyWith` for `FilterOption` .
+Add `copyWith` for `FilterOption` .
 
 ## 0.5.3+1
 
-- Support android v2 model.
+Support android v2 model.
 
 ## 0.5.3
 
-Fixes:
+Fix:
+
 - Cannot get audio problem in androidQ.
 
 ## 0.5.2
 
-- Support macOS.
-- From the version, Starting from this version, 1.9 or earlier versions are not supported.
+Support MacOS
+
+From the version, Starting from this version, 1.9 or earlier versions are not supported.
 
 ## 0.5.1
 
 Feature:
+
 - Save image asset with file path.
 - Copy asset to another album.
 - Create AssetEntity with id.
@@ -324,7 +316,8 @@ Feature:
   - Remove all non-existing rows.
   - add `relativePath` for android.
 
-Fixes:
+Fix:
+
 - Problem of AssetPathEntity.refreshPathProperties.
 - Open setting in iOS.
 - Edited asset in iOS.
@@ -332,16 +325,15 @@ Fixes:
 - Android onlyAll assetCount bug.
 
 Change:
-- Modified `AssetEntity.file`'s behavior on iOS,
-  it will return a picture in jpg format instead of heic/gif/png currently.
-  Now more in line with the description in the doc,
-  this is suitable for uploading images (theoretically, no Exif information will be included).
+
+- Modified `AssetEntity.file`'s behavior on iOS, currently it will return a picture in jpg format instead of heic/gif/png. Now more in line with the description in the doc, this is suitable for uploading images (theoretically, no Exif information will be included).
 - Update android change media url from file scheme to content scheme.
 - Clean up some unused code.
 
 ## 0.5.0
 
 Feature:
+
 - Add `getSubPathEntities` for `AssetPathEntity`.
 - Add `quality` for `AssetEntity.thumbDataWithSize`.
 - Add `orientation` for `AssetEntity`.
@@ -353,12 +345,14 @@ Feature:
   - Remove `fetchDateTime` from `getAssetPathList`
   - Remove param `dt` from `AssetPathEntity.refreshPathProperties`, and add `refreshPathProperties` params to the method.
 
-Update:
+Update
+
 - **Breaking change**, Split video filter and image filter
 - iOS code is running background thread.
 - getThumb is running in background thread.
 
-Fixes:
+Fix
+
 - exists error on android.
 - use edited origin file on iOS.
 - galleryName maybe is null in android.
@@ -367,20 +361,24 @@ Fixes:
 ## 0.4.8
 
 Fixes:
-- #169
-- #170
+
+- [#169](../../issues/169)
+- [#170](../../issues/170)
 
 ## 0.4.7
 
 New feature:
+
 - Add `FilterOption` for method `getAssetPathList`.
 
 ## 0.4.6
 
-Fixes:
+Fix:
+
 - originFile of `AssetEntity`
 
 Add:
+
 - location(`latitude`,`longitude`) of `AssetEntity`
 - `title` of `AssetEntity`
 - `originBytes` of `AssetEntity`
@@ -388,25 +386,29 @@ Add:
 
 ## 0.4.5
 
-Fixes:
+Fix:
+
 - Can't get thumb/file of video on androidQ.
 
 ## 0.4.4
 
-Fixes:
+Fix:
+
 - Compatibility code, when the width and height of the video is empty, it can still be scanned.
 - Add a default value to `type` of `getAssetPathList`.
 
 ## 0.4.3
 
 Add:
+
 - Delete asset.
 - Add Image.
 - Add Video.
-- Add modifyDate property.
+- Add modifiDate property.
 - Fix videoDuration error.
 
-Fixes:
+Fix:
+
 - CreateDate error.
 
 ## 0.4.2
@@ -415,121 +417,128 @@ Fixes:
 
 ## 0.4.1
 
+Fix:
+
 - Fix ios build error.
 
 ## 0.4.0
 
 Breaking change.
+
 - Some properties in the entity were modified from asynchronous to synchronous.
-- Remove `isCache` params. Now, `getAssetPathList` will reload info everytime.
-  If user want to cache `List<AssetPathEntity>`, then user must do it manually.
+- Remove `isCache` params. Now, `getAssetPathList` will reload info everytime. If user want to cache `List<AssetPathEntity>`, then user must do it self.
 
 Added:
-- Added a method `getAssetListPaged` for paging loading resources to path.
-  The paging implementation is lazy loading, that is, the resource corresponding information is loaded when requested.
-  The entity corresponding to the path is no longer placed in the memory,
-  but is implemented by PHPhoto (ios) and sqlite's limit offset (android).
+
+- Added a method `getAssetListPaged` for paging loading resources to path. The paging implementation is lazy loading, that is, the resource corresponding information is loaded when requested. The entity corresponding to the path is no longer placed in the memory, but is implemented by PHPhoto (ios) and sqlite's limit offset (android).
 - Support AndroidQ privacy.
 
 ## 0.3.5
 
-- Fix iCloud image problem.
+Fix
+
+- ICloud image problem.
 
 ## 0.3.4
 
-- Support flutter 1.6.0 android's thread changes for channel.
+Support flutter 1.6.0 android's thread changes for channel.
 
 ## 0.3.3
 
-- Fix customizing album containing folders on iOS.
+Fix customizing album containing folders on iOS.
 
 ## 0.3.2
 
-- `AssetEntity` add property: `originFile`.
+`AssetEntity` add property: `originFile`
 
 ## 0.3.1
 
-- `AssetEntity` add property: `exists`.
+`AssetEntity` add property: `exists`
 
 ## 0.3.0
 
 - Support Android X.
-- **Breaking change**: Migrate from the deprecated original Android Support Library to AndroidX.
-  This shouldn't result in any functional changes,
-  but it requires any Android apps using this plugin to also migrate if they're using the original support library.
-- Fix NPE for image crash on android.
-- Add a method to create `AssetEntity` with id.
-- Add `isCache` for method `getImageAsset`,`getVideoAsset` or `getAssetPathList`.
-- Add observer for photo change.
-- Add field `createTime` for `AssetEntity`.
+- **Breaking change**. Migrate from the deprecated original Android Support Library to AndroidX. This shouldn't result in any functional changes, but it requires any Android apps using this plugin to also migrate if they're using the original support library.
+
+fix NPE for image crash on android.
+
+add a method to create `AssetEntity` with id
+
+add `isCache` for method `getImageAsset`,`getVideoAsset` or `getAssetPathList`
+
+add observer for photo change.
+
+add field `createTime` for `AssetEntity`
 
 ## 0.2.1
 
-- Add `getVideoAsset` and `getImageAsset` to load video / image.
+add two method to load video / image
+
+`getVideoAsset` `getImageAsset`
 
 ## 0.2.0
 
-- Add asset size field.
-- Add cache release method.
+add asset size field
+
+release cache method
 
 ## 0.1.10
 
-- Fix when number of photo/video is 0, will crash.
+fix
+
+    when number of photo/video is 0, will crash
 
 ## 0.1.9
 
-- Add video duration.
+add video duration
 
-## 0.1.8
+## 0.1.8 sort asset by data
 
-- Sort asset by date.
+## 0.1.7 fix bug
 
-## 0.1.7
+fix bug: Android's latest picture won't be found
 
-- Fix Android's latest picture won't be found.
-- Update gradle wrapper version.
-- Update kotlin version.
+update gradle wrapper version.
+
+update kotlin version
 
 ## 0.1.6
 
-- Fix Android to get pictures that are empty bug.
+Fix Android to get pictures that are empty bug.
 
 ## 0.1.5
 
-- Support ios icloud image and video.
+support ios icloud image and video
 
-## 0.1.4
+## 0.1.4 fix bug
 
-- Update all path `hasVideo` property.
+update all path hasVideo property
 
-## 0.1.3
+## 0.1.3 add params
 
-- Add a params to help user disable get video.
+add a params to help user disable get video
 
-## 0.1.2
+## 0.1.2 fix bug
 
-- iOS get video file is async.
+ios get video file is async
 
-## 0.1.1
+## 0.1.1 fix ios video
 
-- Fix 'ios video full file is a jpg' problem.
+fix 'ios video full file is a jpg' problem
 
-## 0.1.0
+## 0.1.0 support video
 
-- Support video in android.
-- Change API from ImageXXXX to AssetXXXX.
+support video in android.
+and will change api from ImageXXXX to AssetXXXX
 
-## 0.0.3
+## 0.0.3 fix bug
 
-- Update for the issue #1. (NPE when request other permission on android)
+update for the issue #1 (NPE when request other permission on android)
 
-## 0.0.2
-
-- Update README.
+## 0.0.2 update readme
 
 ## 0.0.1
 
-First version.
-- API for photo.
+first version
 
-[Migration Guide]: MIGRATION_GUIDE.md
+api for photo

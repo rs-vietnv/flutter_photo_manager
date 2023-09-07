@@ -1,3 +1,7 @@
+//
+// Created by Caijinglong on 2019-02-26.
+//
+
 #import <Photos/Photos.h>
 #import "PhotoChangeObserver.h"
 #import "core/PMLogUtils.h"

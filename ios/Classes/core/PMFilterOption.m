@@ -1,24 +1,18 @@
+//
+// Created by Caijinglong on 2020/1/17.
+//
+
 #import "PMFilterOption.h"
 
 @implementation PMFilterOptionGroup {
 }
 
 - (NSArray<NSSortDescriptor *> *)sortCond {
-    if (self.sortArray == nil || self.sortArray.count == 0) {
-        return nil;
-    }
     return self.sortArray;
 }
 
 - (void)injectSortArray:(NSArray *)array {
     NSMutableArray<NSSortDescriptor *> *result = [NSMutableArray new];
-    
-    // Handle platform default sorting first.
-    if (array.count == 0) {
-        // Set an empty sort array directly.
-        self.sortArray = nil;
-        return;
-    }
     
     for (NSDictionary *dict in array) {
         int typeValue = [dict[@"type"] intValue];
@@ -47,7 +41,7 @@
     
 }
 - (NSString *)sizeCond {
-    return @"pixelWidth >=%d AND pixelWidth <=%d AND pixelHeight >=%d AND pixelHeight <=%d";
+    return @"pixelWidth >= %d AND pixelWidth <=%d AND pixelHeight >= %d AND pixelHeight <=%d";
 }
 
 - (NSArray *)sizeArgs {
@@ -57,11 +51,7 @@
 
 
 - (NSString *)durationCond {
-    NSString *baseCond = @"duration >= %f AND duration <= %f";
-    if (self.durationConstraint.allowNullable) {
-        return [NSString stringWithFormat:@"( duration == nil OR ( %@ ) )", baseCond];
-    }
-    return baseCond;
+    return @"duration >= %f AND duration <= %f";
 }
 
 - (NSArray *)durationArgs {
@@ -79,13 +69,13 @@
 - (NSString *)dateCond:(NSString *)key {
     NSMutableString *str = [NSMutableString new];
     
-    [str appendString:@" AND "];
+    [str appendString:@"AND "];
     [str appendString:@"( "];
     
     // min
     
     [str appendString:key];
-    [str appendString:@" >= %@"];
+    [str appendString:@" >= %@ "];
     
     
     // and

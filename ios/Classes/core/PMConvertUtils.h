@@ -1,3 +1,7 @@
+//
+// Created by Caijinglong on 2019-09-06.
+//
+
 #import <Foundation/Foundation.h>
 #import <Photos/Photos.h>
 @class PMAssetPathEntity;

@@ -1,3 +1,7 @@
+//
+// Created by Caijinglong on 2019-09-09.
+//
+
 #import "PMNotificationManager.h"
 #import "PMConvertUtils.h"
 #import "core/PMLogUtils.h"
@@ -17,7 +21,7 @@
     if (self) {
         self.registrar = registrar;
         channel = [FlutterMethodChannel
-                   methodChannelWithName:@"com.fluttercandies/photo_manager/notify"
+                   methodChannelWithName:@"top.kikt/photo_manager/notify"
                    binaryMessenger:[registrar messenger]];
         _notifying = NO;
     }

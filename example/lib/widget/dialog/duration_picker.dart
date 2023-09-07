@@ -50,21 +50,21 @@ class _DurationPickerState extends State<DurationPicker> {
                           hours: hours, minutes: minutes, seconds: seconds),
                     );
                   },
-                  child: const Text(
-                    'Sure',
+                  child: Text(
+                    "Sure",
                     style: TextStyle(color: Colors.white, fontSize: 14),
                   ),
                 ),
               ),
             ),
             Material(
-              child: SizedBox(
+              child: Container(
                 height: 88,
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
                     _buildPicker(
-                      title: 'h',
+                      title: "h",
                       currentValue: hours,
                       max: 23,
                       valueChanged: (int value) {
@@ -73,7 +73,7 @@ class _DurationPickerState extends State<DurationPicker> {
                       },
                     ),
                     _buildPicker(
-                        title: 'min',
+                        title: "min",
                         currentValue: minutes,
                         max: 59,
                         valueChanged: (int value) {
@@ -81,10 +81,10 @@ class _DurationPickerState extends State<DurationPicker> {
                           changeDuration();
                         }),
                     _buildPicker(
-                        title: 'sec',
+                        title: "sec",
                         currentValue: seconds,
                         max: 59,
-                        valueChanged: (int value) {
+                        valueChanged: (value) {
                           seconds = value;
                           changeDuration();
                         }),
@@ -116,10 +116,10 @@ class _DurationPickerState extends State<DurationPicker> {
               FixedExtentScrollController(initialItem: currentValue),
           itemExtent: 88,
           childCount: max + 1,
-          onSelectedItemChanged: (int value) {
+          onSelectedItemChanged: (value) {
             valueChanged?.call(value);
           },
-          itemBuilder: (BuildContext context, int index) {
+          itemBuilder: (context, index) {
             return Center(
               child: Text(index.toString()),
             );
@@ -144,7 +144,7 @@ Future<Duration?> showCupertinoDurationPicker({
 }) {
   return showDialog(
     context: context,
-    builder: (BuildContext ctx) {
+    builder: (ctx) {
       return DurationPicker(
         initDuration: initDuration,
       );

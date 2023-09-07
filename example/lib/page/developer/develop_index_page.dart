@@ -4,17 +4,15 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
+import 'package:image_scanner_example/page/developer/create_entity_by_id.dart';
 import 'package:photo_manager/photo_manager.dart';
 
-import 'create_entity_by_id.dart';
 import 'dev_title_page.dart';
 import 'ios/create_folder_example.dart';
 import 'ios/edit_asset.dart';
 import 'remove_all_android_not_exists_example.dart';
 
 class DeveloperIndexPage extends StatefulWidget {
-  const DeveloperIndexPage({Key? key}) : super(key: key);
-
   @override
   _DeveloperIndexPageState createState() => _DeveloperIndexPageState();
 }
@@ -24,145 +22,132 @@ class _DeveloperIndexPageState extends State<DeveloperIndexPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('develop index'),
+        title: Text("develop index"),
       ),
       body: ListView(
         children: <Widget>[
           ElevatedButton(
-            child: const Text('Show iOS create folder example.'),
-            onPressed: () => navToWidget(const CreateFolderExample()),
+            child: Text("Show iOS create folder example."),
+            onPressed: () => navToWidget(CreateFolderExample()),
           ),
           ElevatedButton(
-            child: const Text('Test edit image'),
-            onPressed: () => navToWidget(const EditAssetPage()),
+            child: Text("Test edit image"),
+            onPressed: () => navToWidget(EditAssetPage()),
           ),
           ElevatedButton(
-            child: const Text('Show Android remove not exists asset example.'),
-            onPressed: () => navToWidget(const RemoveAndroidNotExistsExample()),
+            child: Text("Show Android remove not exists asset example."),
+            onPressed: () => navToWidget(RemoveAndroidNotExistsExample()),
           ),
           ElevatedButton(
+            child: Text("upload file to local to test EXIF."),
             onPressed: _upload,
-            child: const Text('upload file to local to test EXIF.'),
           ),
           ElevatedButton(
+            child: Text("Save video to photos."),
             onPressed: _saveVideo,
-            child: const Text('Save video to photos.'),
           ),
           ElevatedButton(
+            child: Text("Open test title page"),
             onPressed: _navigatorSpeedOfTitle,
-            child: const Text('Open test title page'),
           ),
           ElevatedButton(
+            child: Text("Open setting."),
             onPressed: _openSetting,
-            child: const Text('Open setting.'),
           ),
           ElevatedButton(
-            child: const Text('Create Entity ById'),
-            onPressed: () => navToWidget(const CreateEntityById()),
+            child: Text("Create Entity ById"),
+            onPressed: () => navToWidget(CreateEntityById()),
           ),
           ElevatedButton(
+            child: Text("Clear file caches"),
             onPressed: _clearFileCaches,
-            child: const Text('Clear file caches'),
           ),
           ElevatedButton(
+            child: Text("Request permission extend"),
             onPressed: _requestPermssionExtend,
-            child: const Text('Request permission extend'),
           ),
-          if (Platform.isIOS)
-            ElevatedButton(
-              onPressed: _persentLimited,
-              child: const Text('PresentLimited'),
-            ),
+          ElevatedButton(
+            child: Text("PresentLimited"),
+            onPressed: _persentLimited,
+          ),
         ],
       ),
     );
   }
 
-  Future<void> _upload() async {
-    final List<AssetPathEntity> path = await PhotoManager.getAssetPathList(
-      type: RequestType.image,
-    );
-    final List<AssetEntity> assetList = await path[0].getAssetListRange(
-      start: 0,
-      end: 5,
-    );
-    final AssetEntity asset = assetList[0];
+  void _upload() async {
+    final path = await PhotoManager.getAssetPathList(type: RequestType.image);
+    final assetList = await path[0].getAssetListRange(start: 0, end: 5);
+    final asset = assetList[0];
 
     // for (final tmpAsset in assetList) {
     //   await tmpAsset.originFile;
     // }
 
-    final File? file = await asset.originFile;
+    final file = await asset.originFile;
     if (file == null) {
       return;
     }
 
-    print('file length = ${file.lengthSync()}');
+    print("file length = ${file.lengthSync()}");
 
-    final http.Client client = http.Client();
-    final http.MultipartRequest req = http.MultipartRequest(
-      'post',
-      Uri.parse('http://172.16.100.7:10001/upload/file'),
+    http.Client client = http.Client();
+    final req = http.MultipartRequest(
+      "post",
+      Uri.parse("http://172.16.100.7:10001/upload/file"),
     );
 
     req.files
-        .add(await http.MultipartFile.fromPath('file', file.absolute.path));
+        .add(await http.MultipartFile.fromPath("file", file.absolute.path));
 
-    req.fields['type'] = 'jpg';
+    req.fields["type"] = "jpg";
 
-    final http.StreamedResponse response = await client.send(req);
-    final String body = await utf8.decodeStream(response.stream);
+    final response = await client.send(req);
+    final body = await utf8.decodeStream(response.stream);
     print(body);
   }
 
-  Future<void> _saveVideo() async {
+  void _saveVideo() async {
     // String url = "http://172.16.100.7:5000/QQ20181114-131742-HD.mp4";
-    const String url =
-        'http://172.16.100.7:5000/Kapture%202019-11-20%20at%2017.07.58.mp4';
+    String url =
+        "http://172.16.100.7:5000/Kapture%202019-11-20%20at%2017.07.58.mp4";
 
-    final HttpClient client = HttpClient();
-    final HttpClientRequest req = await client.getUrl(Uri.parse(url));
-    final HttpClientResponse resp = await req.close();
-    final Directory tmp = Directory.systemTemp;
-    final String title = '${DateTime.now().millisecondsSinceEpoch}.mp4';
-    final File f = File('${tmp.absolute.path}/$title');
+    final client = HttpClient();
+    final req = await client.getUrl(Uri.parse(url));
+    final resp = await req.close();
+    final tmp = Directory.systemTemp;
+    final title = "${DateTime.now().millisecondsSinceEpoch}.mp4";
+    final f = File("${tmp.absolute.path}/$title");
     if (f.existsSync()) {
       f.deleteSync();
     }
     f.createSync();
 
-    resp.listen((List<int> data) {
+    resp.listen((data) {
       f.writeAsBytesSync(data, mode: FileMode.append);
     }, onDone: () async {
       client.close();
-      print('the video file length = ${f.lengthSync()}');
-      final AssetEntity? result =
-          await PhotoManager.editor.saveVideo(f, title: title);
+      print("the video file length = ${f.lengthSync()}");
+      final result = await PhotoManager.editor.saveVideo(f, title: title);
       if (result != null) {
-        print('result : ${(await result.originFile)?.path}');
+        print("result : ${(await result.originFile)?.path}");
       } else {
-        print('result is null');
+        print("result is null");
       }
     });
   }
 
   void _navigatorSpeedOfTitle() {
-    Navigator.push<void>(
-      context,
-      MaterialPageRoute<void>(
-        builder: (BuildContext context) {
-          const DevelopingExample widget = DevelopingExample();
-          return widget;
-        },
-      ),
-    );
+    Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {
+      final widget = DevelopingExample();
+      return widget;
+    }));
   }
 
   void navToWidget(Widget widget) {
-    Navigator.push<void>(
-      context,
-      MaterialPageRoute<void>(builder: (_) => widget),
-    );
+    Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {
+      return widget;
+    }));
   }
 
   void _openSetting() {
@@ -173,24 +158,22 @@ class _DeveloperIndexPageState extends State<DeveloperIndexPage> {
     PhotoManager.clearFileCache();
   }
 
-  Future<void> _requestPermssionExtend() async {
-    final PermissionState state = await PhotoManager.requestPermissionExtend();
+  void _requestPermssionExtend() async {
+    final state = await PhotoManager.requestPermissionExtend();
     print('result --- state: $state');
   }
 
-  bool _isNotify = false;
+  var _isNotify = false;
 
   Future<void> _persentLimited() async {
-    final PermissionState _ps = await PhotoManager.requestPermissionExtend();
-    if (_ps == PermissionState.authorized) {
-      return;
+    if (Platform.isIOS) {
+      if (!_isNotify) {
+        _isNotify = true;
+        PhotoManager.addChangeCallback(_callback);
+      }
+      PhotoManager.startChangeNotify();
+      await PhotoManager.presentLimited();
     }
-    if (!_isNotify) {
-      _isNotify = true;
-      PhotoManager.addChangeCallback(_callback);
-    }
-    PhotoManager.startChangeNotify();
-    await PhotoManager.presentLimited();
   }
 
   void _callback(MethodCall call) {
